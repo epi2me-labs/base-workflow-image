@@ -31,8 +31,8 @@ release:
         - echo "Pulling ${SHATAG}"
         - docker pull ${SHATAG} 
         - echo "Pushing ${TAG}"
-        - docker tag ${SHATAG} ${TAG}
-        - docker push ${TAG}
+        - docker tag ${SHATAG} ${RELTAG}
+        - docker push ${RELTAG}
     only:
         - tags
 
