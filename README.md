@@ -1,34 +1,16 @@
-# Bacterial SNP calling Workflow
+# Base workflow image
 
-This repository contains a nextflow workflow and associated Docker
-container build for performing haploid variant calling with medaka
-from basecalls and a reference file.
+The Docker image created by this workflow performs some very simple actions:
 
-> The pipeline is currently functional but contains little
-> configuration of minimap2, racon, and medaka beyond setting the
-> number of compute threads to use.
+ * Starts from a vanilla Ubuntu 20.04 image.
+ * Sets up a container user and group.
+ * Includes the `fix-permissions` script to allow changing paths to be group owned.
+ * Installs micromamba to allow child containers to install software with mamba.
 
-## Quickstart
+Containers built on this image can be run as:
 
-```bash
-# build the container
-CONTAINER_TAG=bacterial-snps
-docker build -t ${CONTAINER_TAG} -f Dockerfile  .
+    docker run --user $(id -u):$(id -g) --group-add 100
 
-# run the pipeline with the test data
-nextflow run workflow.nf \
-    -w snp_calling_docker/workspace 
-    -profile withdocker
-    --reads test_data/subset.fa.gz --reference test_data/reference.subseq.fa.gz 
-    --threads 4 --out_dir snp_calling
-```
+such the container runs under the host UID, but giving this user access to all
+the relavant parts of the container file-system.
 
-The output of the pipeline will be found in `./snp_calling` for the above
-example. This directory contains the nextflow working directories alongside
-the two primary outputs of the pipeline: a `medaka_consensus.fasta` file and a
-`medaka_consensus.vcf` file.
-
-
-## Useful links
-
-* [medaka](https://www.github.com/nanoporetech/medaka)
