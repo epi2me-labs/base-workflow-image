@@ -1,0 +1,39 @@
+
+stages:
+    - build
+
+image: ${IMAGE}
+
+# Build the image, push to project registry if on dev branch
+build:
+    stage: build
+    script:
+        - echo ${CI_BUILD_TOKEN} | docker login --username gitlab-ci-token --password-stdin ${CI_REGISTRY}
+        - TAG=${CI_REGISTRY_IMAGE}:${CI_COMMIT_BRANCH}
+        - docker build --no-cache -t "${TAG}" -f Dockerfile .
+    after_script:
+        - if [[ ${CI_COMMIT_BRANCH} == 'dev' ]]; then
+              SHATAG=${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA};
+              echo "Pushing ${SHATAG}";
+              docker tag ${TAG} ${SHATAG};
+              docker push ${SHATAG};
+          fi;
+    only:
+        - branches
+
+
+# Retag the image for git tags (releases)
+release:
+    stage: build
+    script:
+        - echo ${CI_BUILD_TOKEN} | docker login --username gitlab-ci-token --password-stdin ${ONTREGISTRY}
+        - SHATAG=${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}
+        - RELTAG=${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}
+        - echo "Pulling ${SHATAG}"
+        - docker pull ${SHATAG} 
+        - echo "Pushing ${TAG}"
+        - docker tag ${SHATAG} ${TAG}
+        - docker push ${TAG}
+    only:
+        - tags
+
