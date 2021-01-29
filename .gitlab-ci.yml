@@ -11,7 +11,6 @@ build:
         - echo ${CI_BUILD_TOKEN} | docker login --username gitlab-ci-token --password-stdin ${CI_REGISTRY}
         - TAG=${CI_REGISTRY_IMAGE}:${CI_COMMIT_BRANCH}
         - docker build --no-cache -t "${TAG}" -f Dockerfile .
-    after_script:
         - if [[ ${CI_COMMIT_BRANCH} == 'dev' ]]; then
               SHATAG=${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA};
               echo "Pushing ${SHATAG}";
