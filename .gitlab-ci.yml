@@ -31,8 +31,7 @@ build:
         - echo ${CI_BUILD_TOKEN} | docker login --username gitlab-ci-token --password-stdin ${CI_REGISTRY}
         - SHATAG=${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}
         - echo "Pulling ${SHATAG}"
-        - echo "Pulling ${ORIG_TAG}"
-        - docker pull ${ORIG_TAG}
+        - docker pull ${SHATAG}
     only:
         - tags
 
@@ -54,6 +53,6 @@ release-hub:
     script:
         - echo ${DOCKERHUB_TOKEN} | docker login --username epi2melabs --password-stdin
         - RELTAG=ontresearch/${CI_PROJECT_NAME}:${CI_COMMIT_TAG}
-        - echo "Pushing ${TAG}"
+        - echo "Pushing ${RELTAG}"
         - docker tag ${SHATAG} ${RELTAG}
         - docker push ${RELTAG}
