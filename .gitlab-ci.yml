@@ -1,9 +1,8 @@
-
 stages:
     - build
     - release
 
-image: ${IMAGE}
+image: ${DOCKERDEVIMAGE}
 
 ##
 # Build the image, push to project registry if on dev branch
